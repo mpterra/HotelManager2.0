@@ -26,7 +26,7 @@ public class GerarContrato {
 	        File arquivoDestino = fileChooser.getSelectedFile();
 
 	        // Tenta abrir o modelo embutido no JAR
-	        try (InputStream inputStream = GerarContrato.class.getResourceAsStream("/modelos/modelo_reserva.docx")) {
+	        try (InputStream inputStream = GerarContrato.class.getResourceAsStream("/resources/modelos/modelo_reserva.docx")) {
 	            if (inputStream == null) {
 	                throw new IllegalStateException("Modelo não encontrado dentro do JAR!");
 	            }

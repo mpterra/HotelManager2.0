@@ -178,8 +178,14 @@ public class InicioPanel extends JPanel {
                 btn.setBackground(Color.YELLOW);
                 btn.setForeground(Color.BLACK);
             } else {
-                btn.setBackground(Color.BLUE);
-                btn.setForeground(Color.WHITE);
+                // hospedagem longa
+                if (quartoInfo.temMulher) {
+                    btn.setBackground(Color.PINK); // rosa se tem mulher
+                    btn.setForeground(Color.BLACK);
+                } else {
+                    btn.setBackground(Color.BLUE); // azul se não tem mulher
+                    btn.setForeground(Color.WHITE);
+                }
             }
             btn.setOpaque(true);
             btn.setBorderPainted(false);
@@ -193,7 +199,7 @@ public class InicioPanel extends JPanel {
     }
 
     private void carregarHospedesDoQuarto(QuartoInfo quartoInfo, Connection conn) throws SQLException {
-        String sql = "SELECT h.nome, res.data_saida " +
+        String sql = "SELECT h.nome, h.sexo, res.data_saida " +
                 "FROM hospedagem res " +
                 "JOIN cama c ON res.cama_id = c.id " +
                 "JOIN hospede h ON res.hospede_id = h.id " +
@@ -204,9 +210,16 @@ public class InicioPanel extends JPanel {
             try (ResultSet rs = ps.executeQuery()) {
                 List<String> nomes = new ArrayList<>();
                 LocalDate dataMaisProxima = null;
+                boolean temMulher = false;
 
                 while (rs.next()) {
                     nomes.add(rs.getString("nome"));
+
+                    String sexo = rs.getString("sexo");
+                    if ("F".equalsIgnoreCase(sexo)) {
+                        temMulher = true;
+                    }
+
                     String dataSaidaStr = rs.getString("data_saida");
                     if (dataSaidaStr != null && !dataSaidaStr.isEmpty()) {
                         LocalDate data = LocalDate.parse(dataSaidaStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -217,6 +230,7 @@ public class InicioPanel extends JPanel {
                 }
                 quartoInfo.hospedes = nomes;
                 quartoInfo.dataDesocupacao = dataMaisProxima;
+                quartoInfo.temMulher = temMulher;
             }
         }
     }
@@ -225,6 +239,7 @@ public class InicioPanel extends JPanel {
         int numero;
         List<String> hospedes = new ArrayList<>();
         LocalDate dataDesocupacao;
+        boolean temMulher = false; // nova flag
         QuartoInfo(int numero) { this.numero = numero; }
     }
 }
